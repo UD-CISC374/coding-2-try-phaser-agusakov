@@ -11,6 +11,8 @@ export default class MainScene extends Phaser.Scene {
   larry: Phaser.Physics.Arcade.Sprite;
   cursorKeys: Phaser.Types.Input.Keyboard.CursorKeys;
   left: boolean;
+  slash: boolean;
+  spacebar: Phaser.Input.Keyboard.Key;
 
   constructor() {
     super({ key: 'MainScene'});
@@ -25,6 +27,7 @@ export default class MainScene extends Phaser.Scene {
     //this.ship2 = this.add.image(this.scale.width / 2, this.scale.height / 2, "ship2");
     this.ship3 = new BallShip(this, "ship3", this.scale.width / 2 + 50, this.scale.height / 2, 2, -2, 2);
     this.larry = this.physics.add.sprite(this.scale.width / 2 + 50, this.scale.height / 2, "larry_walkin_left");
+    this.spacebar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
     
     this.anims.create({
       key: "ship1_anim",
@@ -77,7 +80,7 @@ export default class MainScene extends Phaser.Scene {
     });
     this.anims.create({
       key: "larry_slash_left",
-      frames: this.anims.generateFrameNumbers("larry_slash_left", {start: 0, end: 0}),
+      frames: this.anims.generateFrameNumbers("larry_slash_left", {start: 0, end: 5}),
       frameRate: 13,
       repeat: -1,
     });
@@ -114,6 +117,16 @@ export default class MainScene extends Phaser.Scene {
         this.left = false;
       }
     }
+    else if (this.spacebar.isDown) {
+      if ((this.slash != true)&&(this.left == true)) {
+        this.larry.play("larry_slash_left");
+        this.slash = true;
+      }
+      else if ((this.slash != true)&&(this.left != true)) {
+        this.larry.play("larry_slash_left").flipX;
+        this.slash = true;
+      }
+    }
     else {
       this.larry.setVelocity(0);
       if (this.left == true) {
@@ -122,6 +135,7 @@ export default class MainScene extends Phaser.Scene {
       else {
         this.larry.play("larry_standin_right");
       }
+      this.slash = false;
     }
   }
 
