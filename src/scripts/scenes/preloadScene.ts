@@ -21,10 +21,20 @@ export default class PreloadScene extends Phaser.Scene {
       frameWidth: 16,
       frameHeight: 16
     });
-    this.load.spritesheet("larry_walkin", "assets/spritesheets/larry_walkin_right.png", {
+    this.load.spritesheet("larry_walkin_left", "assets/spritesheets/larry_walkin_left.png", {
       frameWidth: 64,
       frameHeight: 64,
     });
+    this.load.spritesheet("larry_walkin_right", "assets/spritesheets/larry_walkin_right.png", {
+      frameWidth: 64,
+      frameHeight: 64,
+    });
+    this.load.spritesheet("larry_slash_left", "assets/spritesheets/larry_slash_left.png", {
+      frameWidth: 64,
+      frameHeight: 64,
+    });
+
+  
   }
 
   create() {

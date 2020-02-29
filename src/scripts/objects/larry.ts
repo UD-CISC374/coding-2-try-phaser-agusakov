@@ -1,11 +1,14 @@
 export default class Larry extends Phaser.GameObjects.Sprite {
-    xSpeed: number;
-    ySpeed: number;
+    speed: number;
+    direction: string;
 
-    constructor(scene: Phaser.Scene, sprite: string, x: number, y: number, xSpeed: number, ySpeed: number) {
+    constructor(scene: Phaser.Scene, sprite: string, x: number, y: number, speed: number) {
         super(scene, x, y, sprite);
         scene.add.existing(this);
-        this.xSpeed = xSpeed;
-        this.ySpeed = ySpeed;
+        this.speed = speed;
+    }
+
+    setSpeed(speed: number) {
+        this.speed = speed;
     }
 }

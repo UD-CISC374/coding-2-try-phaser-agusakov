@@ -8,8 +8,9 @@ export default class MainScene extends Phaser.Scene {
   ship1: Phaser.GameObjects.Sprite;
   ship2: Phaser.GameObjects.Sprite;
   ship3: Phaser.GameObjects.Sprite;
-  larry: Phaser.GameObjects.Sprite;
-  //cursorKeys: Phaser.Events;
+  larry: Phaser.Physics.Arcade.Sprite;
+  cursorKeys: Phaser.Types.Input.Keyboard.CursorKeys;
+  left: boolean;
 
   constructor() {
     super({ key: 'MainScene'});
@@ -23,7 +24,8 @@ export default class MainScene extends Phaser.Scene {
     //this.ship1 = this.add.image(this.scale.width / 2 - 50, this.scale.height / 2, "ship");
     //this.ship2 = this.add.image(this.scale.width / 2, this.scale.height / 2, "ship2");
     this.ship3 = new BallShip(this, "ship3", this.scale.width / 2 + 50, this.scale.height / 2, 2, -2, 2);
-    this.larry = new Larry(this, "larry_walkin", this.scale.width / 2 + 50, this.scale.height / 2, 2, -2);
+    this.larry = this.physics.add.sprite(this.scale.width / 2 + 50, this.scale.height / 2, "larry_walkin_left");
+    
     this.anims.create({
       key: "ship1_anim",
       frames: this.anims.generateFrameNumbers("ship", {start: 0, end: 1}),
@@ -50,25 +52,77 @@ export default class MainScene extends Phaser.Scene {
       hideOnComplete: true
     });
     this.anims.create({
-      key: "larry_walkin",
-      frames: this.anims.generateFrameNumbers("larry_walkin", {start: 0, end: 8}),
+      key: "larry_walkin_left",
+      frames: this.anims.generateFrameNumbers("larry_walkin_left", {start: 0, end: 8}),
       frameRate: 13,
       repeat: -1
     });
+    this.anims.create({
+      key: "larry_standin_left",
+      frames: this.anims.generateFrameNumbers("larry_walkin_left", {start: 0, end: 0}),
+      frameRate: 13,
+      repeat: -1
+    });
+    this.anims.create({
+      key: "larry_walkin_right",
+      frames: this.anims.generateFrameNumbers("larry_walkin_right", {start: 0, end: 8}),
+      frameRate: 13,
+      repeat: -1,
+    });
+    this.anims.create({
+      key: "larry_standin_right",
+      frames: this.anims.generateFrameNumbers("larry_walkin_right", {start: 0, end: 0}),
+      frameRate: 13,
+      repeat: -1,
+    });
+    this.anims.create({
+      key: "larry_slash_left",
+      frames: this.anims.generateFrameNumbers("larry_slash_left", {start: 0, end: 0}),
+      frameRate: 13,
+      repeat: -1,
+    });
 
-    this.ship1.play("ship1_anim").scale;
+    this.ship1.play("ship1_anim");
     this.ship2.play("ship2_anim");
     this.ship3.play("ship3_anim");
-    this.larry.play("larry_walkin").scale;
+    this.larry.play("larry_walkin_left");
 
 
     this.ship1.setInteractive();
     this.ship2.setInteractive();
     this.ship3.setInteractive();
 
-    //this.cursorKeys = this.input.keyboard.createCursorKeys();
+    this.cursorKeys = this.input.keyboard.createCursorKeys();
 
     this.input.on("gameobjectdown", this.destroyShip, this);
+    this.larry.setCollideWorldBounds(true);
+
+  }
+
+  moveLarry() {
+    if(this.cursorKeys.left?.isDown) {
+      this.larry.setVelocityX(-50);
+      if (this.left != true) {
+        this.larry.play("larry_walkin_left");
+        this.left = true;
+      }
+    }
+    else if(this.cursorKeys.right?.isDown) {
+      this.larry.setVelocityX(50);
+      if (this.left == true) {
+        this.larry.play("larry_walkin_right");
+        this.left = false;
+      }
+    }
+    else {
+      this.larry.setVelocity(0);
+      if (this.left == true) {
+        this.larry.play("larry_standin_left");
+      }
+      else {
+        this.larry.play("larry_standin_right");
+      }
+    }
   }
 
   destroyShip(pointer, gameObject) {
@@ -117,5 +171,6 @@ export default class MainScene extends Phaser.Scene {
     this.moveShip(this.ship1);
     this.moveShip(this.ship2);
     this.moveShip(this.ship3);
+    this.moveLarry();
   }
 }
