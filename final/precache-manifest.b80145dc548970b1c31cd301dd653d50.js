@@ -20,7 +20,7 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/coding-2-try-phaser-agusakov/finalassets/images/aqueduct section.jpg"
   },
   {
-    "revision": "9fd0dcea47820063efe7dabd12e32b87",
+    "revision": "8a78a16ee4870ff7beeac6263f509984",
     "url": "/coding-2-try-phaser-agusakov/finalassets/images/background.png"
   },
   {
@@ -84,15 +84,15 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/coding-2-try-phaser-agusakov/finalassets/spritesheets/ship3.png"
   },
   {
-    "revision": "ea30eb6b6e90ee2091de",
-    "url": "/coding-2-try-phaser-agusakov/finalgen.main.2ce46767e74549f16902.bundle.js"
+    "revision": "92ac85e2afb6bffa91e6",
+    "url": "/coding-2-try-phaser-agusakov/finalgen.main.d3c47ca8c7491401182d.bundle.js"
   },
   {
     "revision": "201b65bee9df6270f739",
     "url": "/coding-2-try-phaser-agusakov/finalgen.vendors.a047ee0740c7d21714d9.bundle.js"
   },
   {
-    "revision": "008eef2059df850ef24bda5ae1c5fc2a",
+    "revision": "d117519d54625d926973711038ba385b",
     "url": "/coding-2-try-phaser-agusakov/finalindex.html"
   },
   {
