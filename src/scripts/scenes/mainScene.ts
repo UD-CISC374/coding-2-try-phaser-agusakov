@@ -1,34 +1,54 @@
 import ExampleObject from '../objects/exampleObject';
 import BallShip from '../objects/ballShip';
+import TileSprite from '../objects/tileSprite';
+import {Cameras } from 'phaser';
 import Larry from '../objects/larry';
+
+/*
+robot art from www.amon.co
+*/
 
 export default class MainScene extends Phaser.Scene {
   private exampleObject: ExampleObject;
-  background: Phaser.GameObjects.Image;
+  background: TileSprite;
   ship1: Phaser.GameObjects.Sprite;
   ship2: Phaser.GameObjects.Sprite;
   ship3: Phaser.GameObjects.Sprite;
   larry: Phaser.Physics.Arcade.Sprite;
+  robot: Phaser.Physics.Arcade.Sprite;
   cursorKeys: Phaser.Types.Input.Keyboard.CursorKeys;
   left: boolean;
   slash: boolean;
+  //left: Input.Keyboard.Key;
+  right: Phaser.Input.Keyboard.Key;
   spacebar: Phaser.Input.Keyboard.Key;
-
+  powerUps: Phaser.Physics.Arcade.Group;
+  robots: Phaser.Physics.Arcade.Group;
+  score: number = 0; 
+  scorelabel; 
+  explosionSound;
+  pickupSound;
+  music;
+  //myCam: Phaser.Camera;
+  
   constructor() {
     super({ key: 'MainScene'});
   }
 
   create() {
-    this.background = this.add.image(0,0,"background");
+    this.background = this.add.tileSprite(0, 0, this.scale.width, this.scale.height, "background");
     this.background.setOrigin(0,0);
-    this.ship1 = new BallShip(this, "ship", this.scale.width / 2 - 50, this.scale.height / 2, -1, 1, 1);
+    this.background.setScrollFactor(1);
+
+    this.ship1 = new BallShip(this, "ship", this.scale.width / 2 - 50, this.scale.height / 2, -1, 4, 1);
     this.ship2 = new BallShip(this, "ship2", this.scale.width / 2, this.scale.height / 2, 1, 1, 3);
-    //this.ship1 = this.add.image(this.scale.width / 2 - 50, this.scale.height / 2, "ship");
-    //this.ship2 = this.add.image(this.scale.width / 2, this.scale.height / 2, "ship2");
     this.ship3 = new BallShip(this, "ship3", this.scale.width / 2 + 50, this.scale.height / 2, 2, -2, 2);
-    this.larry = this.physics.add.sprite(this.scale.width / 2 + 50, this.scale.height / 2, "larry_walkin_left");
+    this.larry = this.physics.add.sprite(this.scale.width / 2 - 50, this.scale.height, "larry_walkin_left");
+    this.robot = this.physics.add.sprite(this.scale.width / 2 + 50, this.scale.height/2, "robot_walkin");
     this.spacebar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
     
+    //this.cameras.main.startFollow(this.larry);
+
     this.anims.create({
       key: "ship1_anim",
       frames: this.anims.generateFrameNumbers("ship", {start: 0, end: 1}),
@@ -84,22 +104,45 @@ export default class MainScene extends Phaser.Scene {
       frameRate: 13,
       repeat: -1,
     });
+    this.anims.create({
+      key: "larry_slash_right",
+      frames: this.anims.generateFrameNumbers("larry_slash_right", {start: 0, end: 5}),
+      frameRate: 13,
+      repeat: -1,
+    });
+    this.anims.create({
+      key: "robot_walkin",
+      frames: this.anims.generateFrameNumbers("robot_walkin", {start: 0, end: 3}),
+      frameRate: 5,
+      repeat: -1,
+    });
 
     this.ship1.play("ship1_anim");
     this.ship2.play("ship2_anim");
     this.ship3.play("ship3_anim");
     this.larry.play("larry_walkin_left");
+    this.robot.play("robot_walkin");
 
+``
 
     this.ship1.setInteractive();
     this.ship2.setInteractive();
     this.ship3.setInteractive();
+    this.robot.setInteractive();
 
     this.cursorKeys = this.input.keyboard.createCursorKeys();
 
-    this.input.on("gameobjectdown", this.destroyShip, this);
+    //this.input.on("gameobjectdown", this.destroyRobot, this);
     this.larry.setCollideWorldBounds(true);
+    this.robot.setCollideWorldBounds(true);
 
+    //this.physics.add.overlap(this.larry, this.robot);
+    //this.physics.add.overlap(this.larry, this.robot);
+
+  }
+
+  pickPowerUp(player, powerUp){
+    powerUp.disableBody(true, true);
   }
 
   moveLarry() {
@@ -116,6 +159,7 @@ export default class MainScene extends Phaser.Scene {
         this.larry.play("larry_walkin_right");
         this.left = false;
       }
+      this.background.tilePositionX += 5;
     }
     else if (this.spacebar.isDown) {
       if ((this.slash != true)&&(this.left == true)) {
@@ -123,7 +167,7 @@ export default class MainScene extends Phaser.Scene {
         this.slash = true;
       }
       else if ((this.slash != true)&&(this.left != true)) {
-        this.larry.play("larry_slash_left").flipX;
+        this.larry.play("larry_slash_right");
         this.slash = true;
       }
     }
@@ -139,9 +183,18 @@ export default class MainScene extends Phaser.Scene {
     }
   }
 
-  destroyShip(pointer, gameObject) {
-    gameObject.setTexture("explosion");
-    gameObject.play("explode");
+  moveRobot() {
+    /*if(this.slash == true) {
+      if(this.robot.x == this.larry.x) {
+        this.destroyRobot(this.robot);
+      }
+    }*/
+    this.robot.setVelocityX(-50);
+  }
+
+  destroyRobot(sprite) {
+    sprite.setTexture("explosion");
+    sprite.play("explode").scale = 2;
   }
 
   moveShip(ship) {
@@ -153,8 +206,8 @@ export default class MainScene extends Phaser.Scene {
     }
     ship.angle += ship.spin;*/
     //console.log(ship.rotation);
-    //ship.x += ship.xSpeed;
-    //ship.y += ship.ySpeed;
+    ship.x += ship.xSpeed;
+    ship.y += ship.ySpeed;
     
     if ((ship.x >= this.scale.width)||(ship.x <= 0)) {
       /*if ((ship.xSpeed > 0)&&(ship.ySpeed > 0)&&(ship.spin > 0)) {
@@ -186,5 +239,6 @@ export default class MainScene extends Phaser.Scene {
     this.moveShip(this.ship2);
     this.moveShip(this.ship3);
     this.moveLarry();
+    this.moveRobot();
   }
 }

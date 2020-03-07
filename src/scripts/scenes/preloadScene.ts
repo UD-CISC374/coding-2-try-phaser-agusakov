@@ -33,6 +33,14 @@ export default class PreloadScene extends Phaser.Scene {
       frameWidth: 64,
       frameHeight: 64,
     });
+    this.load.spritesheet("larry_slash_right", "assets/spritesheets/larry_slash_right.png", {
+      frameWidth: 64,
+      frameHeight: 64,
+    });
+    this.load.spritesheet("robot_walkin", "assets/spritesheets/robot_walkin.png", {
+      frameWidth: 64,
+      frameHeight: 64,
+    });
 
   
   }
